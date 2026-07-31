@@ -1,0 +1,575 @@
+/* =============================================
+   DataTable CSS — Scoped & Override-Safe
+   সব selector .datatable-container এর ভেতরে
+   যাতে admin theme override করতে না পারে
+   ============================================= */
+
+:root {
+    --datatable-bg: #ffffff;
+    --datatable-border: #e5e7eb;
+    --datatable-header-bg: #f9fafb;
+    --datatable-row-hover: #f3f4f6;
+    --datatable-text: #111827;
+    --datatable-text-muted: #6b7280;
+    --datatable-primary: #3b82f6;
+    --datatable-shadow: rgba(0, 0, 0, 0.08);
+    --datatable-danger: #ef4444;
+    --datatable-danger-hover: #fee2e2;
+}
+
+.dark {
+    --datatable-bg: #1f2937;
+    --datatable-border: #374151;
+    --datatable-header-bg: #111827;
+    --datatable-row-hover: #374151;
+    --datatable-text: #f9fafb;
+    --datatable-text-muted: #9ca3af;
+    --datatable-primary: #3b82f6;
+    --datatable-shadow: rgba(0, 0, 0, 0.3);
+    --datatable-danger: #f87171;
+    --datatable-danger-hover: #450a0a;
+}
+
+/* ── Container ── */
+.datatable-container {
+    width: 100%;
+    background-color: var(--datatable-bg) !important;
+    border-radius: 0.75rem;
+    border: 1px solid var(--datatable-border) !important;
+    box-shadow: 0 1px 3px var(--datatable-shadow);
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.datatable-container .datatable-header {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--datatable-border) !important;
+    background-color: var(--datatable-header-bg) !important;
+}
+
+.datatable-container .datatable-header-left {
+    display: flex !important;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+/* ── Search ── */
+.datatable-container .datatable-search-wrapper {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    min-width: 220px;
+    flex: 1;
+}
+
+.datatable-container .datatable-search-input {
+    width: 100% !important;
+    padding-left: 0.875rem !important;
+    padding-right: 2.25rem !important;
+    background-color: var(--datatable-bg) !important;
+    border: 1px solid var(--datatable-border) !important;
+    color: var(--datatable-text) !important;
+    border-radius: 0.5rem !important;
+    height: 2.25rem !important;
+    font-size: 0.875rem !important;
+    outline: none;
+    box-shadow: none !important;
+    transition: border-color 0.2s;
+}
+
+.datatable-container .datatable-search-input:focus {
+    border-color: var(--datatable-primary) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+.datatable-container .datatable-search-clear {
+    position: absolute;
+    right: 0.625rem;
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    color: var(--datatable-text-muted) !important;
+    display: flex;
+    align-items: center;
+    padding: 0.125rem;
+    border-radius: 0.25rem;
+    transition: color 0.2s;
+}
+
+.datatable-container .datatable-search-clear:hover {
+    color: var(--datatable-text) !important;
+}
+
+/* ── Filters ── */
+.datatable-container .datatable-filters {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.datatable-container .datatable-filter-item {
+    display: flex !important;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.datatable-container .datatable-filter-clear {
+    display: flex !important;
+    align-items: center;
+    padding: 0.25rem;
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    color: var(--datatable-text-muted) !important;
+    border-radius: 0.25rem;
+    transition: color 0.2s;
+}
+
+.datatable-container .datatable-filter-clear:hover {
+    color: var(--datatable-text) !important;
+}
+
+/* ── Per Page ── */
+.datatable-container .datatable-perpage {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.datatable-container .datatable-perpage-label {
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    white-space: nowrap;
+}
+
+.datatable-container .datatable-select {
+    min-width: 140px;
+    background-color: var(--datatable-bg) !important;
+    border: 1px solid var(--datatable-border) !important;
+    color: var(--datatable-text) !important;
+    border-radius: 0.5rem;
+    height: 2.25rem;
+    font-size: 0.875rem;
+}
+
+.datatable-container .datatable-select-small {
+    width: 76px;
+    background-color: var(--datatable-bg) !important;
+    border: 1px solid var(--datatable-border) !important;
+    color: var(--datatable-text) !important;
+    border-radius: 0.5rem;
+    height: 2.25rem;
+    font-size: 0.875rem;
+}
+
+/* ── Table Wrapper ── */
+.datatable-container .datatable-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ── Table ── */
+.datatable-container .datatable {
+    width: 100%;
+    border-collapse: collapse !important;
+    min-width: 600px;
+}
+
+/* ── THEAD ── */
+.datatable-container .datatable-thead {
+    background-color: var(--datatable-header-bg) !important;
+    border-bottom: 2px solid var(--datatable-border) !important;
+}
+
+.datatable-container .datatable-th {
+    padding: 0.875rem 1rem !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+    color: var(--datatable-text) !important;
+    font-size: 0.8125rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    background-color: var(--datatable-header-bg) !important;
+    border: none !important;
+}
+
+.datatable-container .datatable-th-number {
+    width: 3rem;
+    text-align: center !important;
+    color: var(--datatable-text-muted) !important;
+}
+
+.datatable-container .datatable-th-actions {
+    width: 4rem;
+    text-align: center !important;
+    color: var(--datatable-text) !important;
+}
+
+.datatable-container .datatable-th-sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s;
+}
+
+.datatable-container .datatable-th-sortable:hover {
+    background-color: var(--datatable-row-hover) !important;
+}
+
+/* ── CRITICAL FIX: Sort icon inline layout ── */
+.datatable-container .datatable-th-content {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.375rem;
+    width: 100%;
+}
+
+.datatable-container .datatable-th-content > span {
+    color: var(--datatable-text) !important;
+    font-weight: 600 !important;
+}
+
+.datatable-container .datatable-sort-icons {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    flex-shrink: 0;
+    line-height: 0;
+}
+
+.datatable-container .datatable-sort-icon {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    color: #d1d5db !important;
+    display: block !important;
+    margin: -1px 0;
+}
+
+.datatable-container .datatable-sort-icon-active {
+    color: var(--datatable-primary) !important;
+}
+
+/* ── TBODY ── */
+.datatable-container .datatable-tbody {
+    background-color: var(--datatable-bg) !important;
+}
+
+.datatable-container .datatable-row {
+    border-bottom: 1px solid var(--datatable-border) !important;
+    transition: background-color 0.15s;
+    background-color: var(--datatable-bg) !important;
+}
+
+.datatable-container .datatable-row:last-child {
+    border-bottom: none !important;
+}
+
+.datatable-container .datatable-row:hover {
+    background-color: var(--datatable-row-hover) !important;
+}
+
+.datatable-container .datatable-cell {
+    padding: 0.875rem 1rem !important;
+    color: var(--datatable-text) !important;
+    font-size: 0.875rem !important;
+    vertical-align: middle !important;
+    border: none !important;
+}
+
+.datatable-container .datatable-cell-number {
+    text-align: center !important;
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.8125rem !important;
+}
+
+.datatable-container .datatable-cell-actions {
+    text-align: center !important;
+    padding: 0.5rem !important;
+}
+
+.datatable-container .datatable-cell-center {
+    padding: 3rem 1rem !important;
+    text-align: center !important;
+    color: var(--datatable-text-muted) !important;
+}
+
+/* ── Loading ── */
+.datatable-container .datatable-loading {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.5rem;
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.875rem;
+}
+
+.datatable-container .datatable-spinner {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid var(--datatable-border);
+    border-top-color: var(--datatable-primary);
+    border-radius: 50%;
+    animation: datatable-spin 0.6s linear infinite;
+}
+
+@keyframes datatable-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Empty State ── */
+.datatable-container .datatable-empty {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 1rem;
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.875rem;
+}
+
+.datatable-container .datatable-empty-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    color: #d1d5db !important;
+}
+
+/* ── Actions Dropdown ── */
+.datatable-container .datatable-actions-trigger {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 0.375rem;
+    background: none !important;
+    border: 1px solid transparent !important;
+    cursor: pointer;
+    color: var(--datatable-text-muted) !important;
+    transition: all 0.15s;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.datatable-container .datatable-actions-trigger:hover {
+    background-color: var(--datatable-row-hover) !important;
+    border-color: var(--datatable-border) !important;
+    color: var(--datatable-text) !important;
+}
+
+.datatable-container .datatable-actions-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+    color: inherit !important;
+}
+
+/* Dropdown menu — outside container scope intentionally (portalled) */
+.datatable-actions-menu {
+    min-width: 10rem;
+    background-color: var(--datatable-bg) !important;
+    border: 1px solid var(--datatable-border) !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 0.25rem;
+    z-index: 9999;
+}
+
+.datatable-action-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    color: var(--datatable-text) !important;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-weight: 400 !important;
+    background: none !important;
+    border: none !important;
+    width: 100%;
+    text-align: left;
+}
+
+.datatable-action-item:hover {
+    background-color: var(--datatable-row-hover) !important;
+    color: var(--datatable-text) !important;
+}
+
+.datatable-action-item-destructive {
+    color: var(--datatable-danger) !important;
+}
+
+.datatable-action-item-destructive:hover {
+    background-color: var(--datatable-danger-hover) !important;
+    color: var(--datatable-danger) !important;
+}
+
+.datatable-action-icon {
+    display: flex !important;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+}
+
+/* ── Footer ── */
+.datatable-container .datatable-footer {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--datatable-border) !important;
+    background-color: var(--datatable-header-bg) !important;
+}
+
+.datatable-container .datatable-info {
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+}
+
+.datatable-container .datatable-info-highlight {
+    font-weight: 600 !important;
+    color: var(--datatable-text) !important;
+}
+
+/* ── Pagination ── */
+.datatable-container .datatable-pagination {
+    display: flex !important;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+}
+
+.datatable-container .datatable-pagination-numbers {
+    display: flex !important;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.datatable-container .datatable-pagination-number {
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+    font-size: 0.8125rem !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid var(--datatable-border) !important;
+    background-color: var(--datatable-bg) !important;
+    color: var(--datatable-text) !important;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+.datatable-container .datatable-pagination-number:hover {
+    background-color: var(--datatable-row-hover) !important;
+    border-color: var(--datatable-primary) !important;
+    color: var(--datatable-primary) !important;
+}
+
+/* active page (shadcn variant="default" এ bg নীল হয়, তাই text সাদা রাখতে) */
+.datatable-container .datatable-pagination-number[data-state="active"],
+.datatable-container .datatable-pagination-number.bg-primary {
+    color: #ffffff !important;
+}
+
+.datatable-container .datatable-pagination-dots {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    color: var(--datatable-text-muted) !important;
+    font-size: 0.875rem;
+    user-select: none;
+}
+
+.datatable-container .datatable-pagination-nav {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.25rem;
+    height: 2rem;
+    padding: 0 0.625rem;
+    font-size: 0.8125rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--datatable-border) !important;
+    background-color: var(--datatable-bg) !important;
+    color: var(--datatable-text) !important;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+}
+
+.datatable-container .datatable-pagination-nav:hover:not(:disabled) {
+    background-color: var(--datatable-row-hover) !important;
+    border-color: var(--datatable-primary) !important;
+    color: var(--datatable-primary) !important;
+}
+
+.datatable-container .datatable-pagination-nav:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed;
+}
+
+.datatable-container .datatable-pagination-nav-text {
+    font-size: 0.8125rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .datatable-container .datatable-header {
+        flex-direction: column !important;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    .datatable-container .datatable-header-left {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .datatable-container .datatable-search-wrapper {
+        min-width: 100%;
+    }
+    .datatable-container .datatable-perpage {
+        justify-content: flex-end;
+    }
+    .datatable-container .datatable-footer {
+        flex-direction: column !important;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .datatable-container .datatable-pagination {
+        width: 100%;
+        justify-content: center;
+    }
+    .datatable-container .datatable-cell {
+        padding: 0.75rem !important;
+    }
+    .datatable-container .datatable-th {
+        padding: 0.75rem !important;
+    }
+    .datatable-container .datatable-pagination-nav-text {
+        display: none;
+    }
+}

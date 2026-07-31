@@ -1,0 +1,165 @@
+# Hostinger shared-hosting auto-deploy via Appleboy SCP + SSH (password auth).
+#
+# ---------------------------------------------------------------------------
+# Required GitHub repository secrets (Settings → Secrets and variables → Actions)
+# ---------------------------------------------------------------------------
+#   SSH_HOST          Hostinger SSH hostname (e.g. 123.45.67.89 or srv123.hostinger.com)
+#   SSH_PORT          SSH port — Hostinger shared is usually 65002 (not 22)
+#   SSH_USER          SSH username (often u123456789)
+#   SSH_PASSWORD      SSH account password from hPanel → Advanced → SSH Access
+#   DEPLOY_PATH       Absolute app root on the server, e.g.
+#                     /home/u123/domains/yoursite.com/public_html
+#
+# ---------------------------------------------------------------------------
+# One-time Hostinger / local setup
+# ---------------------------------------------------------------------------
+# 1) In hPanel → Advanced → SSH Access: enable SSH and note your username,
+#    host, port (often 65002), and password. Store them as the secrets above.
+#
+# 2) On the server, place a production .env under DEPLOY_PATH once (never overwrite from CI).
+#    Ensure storage/ and bootstrap/cache are writable, Composer is on PATH, and the
+#    Hostinger document root points at DEPLOY_PATH/public (Laravel public/).
+#
+# 3) Push to main or run this workflow manually (Actions → Deploy → Run workflow).
+#
+# Never commit .env or Hostinger passwords into the repository.
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Composer dependencies (CI build only)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Install npm dependencies and build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Prepare deploy bundle
+        run: |
+          set -euo pipefail
+          mkdir -p deploy-bundle
+          # Sync application files; never ship secrets, VCS, or heavy local dirs.
+          # vendor is installed on the server; public/build comes from the CI npm build.
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.cursor/' \
+            --exclude='.idea/' \
+            --exclude='.vscode/' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='tests/' \
+            --exclude='deploy-bundle/' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            --exclude='storage/pail/' \
+            --exclude='*.md' \
+            --exclude='phpunit.xml*' \
+            --exclude='pest.php' \
+            --exclude='.editorconfig' \
+            --exclude='.prettierrc' \
+            --exclude='eslint.config.js' \
+            --exclude='AGENTS.md' \
+            --exclude='CLAUDE.md' \
+            ./ deploy-bundle/
+
+          # Keep Laravel storage directory structure (empty dirs + .gitignore placeholders).
+          mkdir -p \
+            deploy-bundle/storage/app/public \
+            deploy-bundle/storage/framework/{cache/data,sessions,testing,views} \
+            deploy-bundle/storage/logs \
+            deploy-bundle/bootstrap/cache
+
+          test -d deploy-bundle/public/build
+
+      - name: Upload files over SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: deploy-bundle/*
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 1
+          overwrite: true
+          # Do NOT set rm: true — that would wipe production .env and uploaded files.
+
+      - name: Run remote Composer and Artisan
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: DEPLOY_PATH
+          command_timeout: 20m
+          script: |
+            set -euo pipefail
+
+            cd "$DEPLOY_PATH"
+
+            if [ ! -f .env ]; then
+              echo "Missing production .env in $DEPLOY_PATH — create it once in hPanel/SSH before deploying."
+              exit 1
+            fi
+
+            if command -v composer >/dev/null 2>&1; then
+              COMPOSER_BIN="composer"
+            elif [ -f composer.phar ]; then
+              COMPOSER_BIN="php composer.phar"
+            else
+              echo "Composer not found on the server PATH. Install Composer or add composer.phar to DEPLOY_PATH."
+              exit 1
+            fi
+
+            $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+            php artisan migrate --force
+            php artisan storage:link || true
+
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Shared hosting often cannot reload php-fpm/nginx; opcache may refresh on its own.
+            php artisan about

@@ -1,0 +1,54 @@
+/*
+ * Styles for the PDF reader (`components/pdf`). react-pdf ships the base
+ * text/annotation layer CSS; this file only covers the parts we theme.
+ */
+
+.react-pdf__Document {
+    display: flex;
+    min-height: 0;
+}
+
+.react-pdf__Page {
+    position: relative;
+    background-color: #fff;
+}
+
+.react-pdf__Page__canvas {
+    display: block;
+    max-width: 100%;
+    height: auto !important;
+}
+
+/*
+ * The text layer sits invisibly on top of the canvas so text stays selectable
+ * and searchable. Highlights are painted through it.
+ */
+.react-pdf__Page__textContent span {
+    cursor: text;
+}
+
+.react-pdf__Page__textContent mark.pdf-highlight {
+    color: transparent;
+    background-color: rgb(250 204 21 / 0.5);
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgb(202 138 4 / 0.6);
+}
+
+.react-pdf__Page__textContent ::selection {
+    background-color: rgb(59 130 246 / 0.35);
+}
+
+/* Keep annotation links usable without letting them inherit page styling. */
+.react-pdf__Page__annotations .linkAnnotation > a {
+    border-radius: 2px;
+}
+
+.react-pdf__Page__annotations .linkAnnotation > a:hover {
+    background-color: rgb(59 130 246 / 0.2);
+}
+
+/* Hide the browser's native fullscreen backdrop seams. */
+.react-pdf__Document:fullscreen,
+:fullscreen .react-pdf__Document {
+    background-color: var(--background);
+}
