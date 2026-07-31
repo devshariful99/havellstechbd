@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import type { ContactPageData } from '@/types';
+
 import { cn } from '../../lib/utils';
 import InputError from '../input-error';
-import type { ContactPageData } from '@/types';
 
 interface ContactProps {
     contactData: ContactPageData;

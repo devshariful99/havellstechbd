@@ -41,6 +41,14 @@ interface PdfReaderProps {
     onClose?: () => void;
 }
 
+interface PdfReaderViewProps {
+    fileUrl: string;
+    fileName: string;
+    title?: string;
+    className?: string;
+    onClose?: () => void;
+}
+
 interface PageSize {
     width: number;
     height: number;
@@ -65,6 +73,26 @@ export default function PdfReader({
     const fileUrl = useMemo(() => resolvePdfUrl(file), [file]);
     const fileName = useMemo(() => pdfFileName(file), [file]);
 
+    // Remount when the document changes so viewer state and refs start fresh.
+    return (
+        <PdfReaderView
+            key={fileUrl}
+            fileUrl={fileUrl}
+            fileName={fileName}
+            title={title}
+            className={className}
+            onClose={onClose}
+        />
+    );
+}
+
+function PdfReaderView({
+    fileUrl,
+    fileName,
+    title,
+    className,
+    onClose,
+}: PdfReaderViewProps) {
     const containerRef = useRef<HTMLDivElement | null>(null);
     // Held in state rather than a ref because child pages need it during render
     // to scope their intersection observers.
@@ -119,22 +147,6 @@ export default function PdfReader({
 
         return () => observer.disconnect();
     }, [scrollElement]);
-
-    // Reset viewer state whenever the source document changes.
-    useEffect(() => {
-        documentRef.current = null;
-        pageRefs.current.clear();
-        visibilityRef.current.clear();
-        setPageCount(0);
-        setCurrentPage(1);
-        setBaseSize(DEFAULT_PAGE_SIZE);
-        setScale(1);
-        setIsFitWidth(true);
-        setRotation(0);
-        setSearchTerm('');
-        setMatchCount(null);
-        setLoadError(null);
-    }, [fileUrl]);
 
     useEffect(() => {
         const onFullscreenChange = () => {
