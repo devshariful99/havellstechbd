@@ -1,3 +1,10 @@
+# Hostinger (and many shared hosts) serve .mjs as text/plain by default, which
+# blocks browsers from loading Vite/pdf.js worker modules. Force the JS MIME.
+<IfModule mod_mime.c>
+    AddType text/javascript js mjs
+    AddType application/wasm wasm
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

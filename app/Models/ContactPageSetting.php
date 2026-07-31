@@ -234,7 +234,8 @@ class ContactPageSetting extends Model
                 }
             }
 
-            if ($title === '' && $lines === []) {
+            // Titles without any detail lines are omitted from the public page.
+            if ($lines === []) {
                 continue;
             }
 

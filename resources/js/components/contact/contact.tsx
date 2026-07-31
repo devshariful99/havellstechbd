@@ -37,8 +37,12 @@ export default function Contact({ contactData }: ContactProps) {
         return () => observer.disconnect();
     }, []);
 
-    const offices = contactData.offices ?? [];
-    const phones = contactData.phones ?? [];
+    const offices = (contactData.offices ?? []).filter(
+        (office) => office.lines.length > 0,
+    );
+    const phones = (contactData.phones ?? []).filter(
+        (phoneGroup) => phoneGroup.lines.length > 0,
+    );
     const hasOffices = offices.length > 0;
     const hasPhones = phones.length > 0;
 

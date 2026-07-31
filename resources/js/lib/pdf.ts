@@ -1,10 +1,8 @@
 import { pdfjs } from 'react-pdf';
 
-// Recommended Vite worker setup — keeps the worker as a separate hashed asset.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-).toString();
+// Use the CDN worker rather than a hashed /build asset. Shared hosts often
+// serve `.mjs` as text/plain, which browsers refuse to execute as a module.
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 /**
  * Shared loader options. `cMapPacked` is required for character maps; wasm and

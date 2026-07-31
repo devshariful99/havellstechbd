@@ -29,6 +29,42 @@ test('the contact page renders with managed office details', function () {
             ->where('contactData.offices.2.title', 'Wire House'));
 });
 
+test('the contact page omits office and phone titles that have no detail lines', function () {
+    ContactPageSetting::current()->update([
+        'offices' => [
+            [
+                'title' => 'Corporate Office',
+                'lines' => ['Sheba Nurjahan Eyecon Center', 'Dhaka 1000'],
+            ],
+            [
+                'title' => 'Wire House',
+                'lines' => [],
+            ],
+        ],
+        'phones' => [
+            [
+                'title' => 'Help Line',
+                'lines' => ['096 96 62 83 422'],
+            ],
+            [
+                'title' => 'Hotline',
+                'lines' => [''],
+            ],
+        ],
+    ]);
+
+    ContactPageSetting::flushPublicCache();
+
+    $this->get(route('contact'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('frontend/contact')
+            ->has('contactData.offices', 1)
+            ->has('contactData.phones', 1)
+            ->where('contactData.offices.0.title', 'Corporate Office')
+            ->where('contactData.phones.0.title', 'Help Line'));
+});
+
 test('a visitor can submit the contact form', function () {
     Mail::fake();
     ContactPageSetting::current();

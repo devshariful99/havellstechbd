@@ -33,7 +33,8 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // Keep private files unserved so /storage/* can expose the public disk.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],
@@ -43,6 +44,8 @@ return [
             'root' => storage_path('app/public'),
             'url' => rtrim(env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
+            // Fallback when `public/storage` symlink is missing (common on Hostinger).
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],

@@ -154,7 +154,20 @@ jobs:
             $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
             php artisan migrate --force
-            php artisan storage:link || true
+
+            # Hostinger often cannot create symlinks. Prefer a real link; otherwise
+            # mirror public-disk files into public/storage so static serving still works.
+            # config/filesystems.php also enables Laravel's public-disk /storage fallback.
+            if [ -L public/storage ]; then
+              echo "public/storage symlink already present"
+            elif [ -d public/storage ]; then
+              rsync -a storage/app/public/ public/storage/
+            elif php artisan storage:link; then
+              echo "public/storage symlink created"
+            else
+              mkdir -p public/storage
+              rsync -a storage/app/public/ public/storage/
+            fi
 
             php artisan optimize:clear
             php artisan config:cache

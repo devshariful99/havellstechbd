@@ -10,6 +10,7 @@ import {
 import {
     Document,
     type DocumentProps,
+    pdfjs,
     type TextItem,
     type TextMarkedContent,
 } from 'react-pdf';
@@ -31,6 +32,9 @@ import { cn } from '@/lib/utils';
 import PdfPage from './pdf-page';
 import PdfThumbnails from './pdf-thumbnails';
 import PdfToolbar from './pdf-toolbar';
+
+// Must live in this module — react-pdf can overwrite a workerSrc set elsewhere.
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PdfReaderProps {
     /** Stored path (`products/files/x.pdf`) or an absolute URL. */
