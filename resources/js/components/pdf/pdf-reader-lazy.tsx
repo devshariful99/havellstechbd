@@ -18,7 +18,7 @@ export default function PdfReaderLazy({
             fallback={
                 <div
                     className={cn(
-                        'flex min-h-96 flex-col items-center justify-center gap-3 rounded-lg border border-border bg-muted/40 text-muted-foreground',
+                        'flex min-h-96 w-full flex-col items-center justify-center gap-3 rounded-lg border border-border bg-muted/40 text-muted-foreground',
                         className,
                     )}
                 >

@@ -55,7 +55,7 @@ export default function DocumentViewer({
                 <PdfReader
                     file={file}
                     title={title}
-                    className="min-h-[70vh] flex-1 rounded-xl shadow-sm sm:min-h-[calc(100dvh-13rem)]"
+                    className="h-[calc(100dvh-12rem)] min-h-[28rem] rounded-xl shadow-sm"
                     onClose={() => router.visit(backUrl)}
                 />
             </div>

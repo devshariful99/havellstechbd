@@ -433,7 +433,7 @@ function PdfReaderView({
         <div
             ref={containerRef}
             className={cn(
-                'flex flex-col overflow-hidden rounded-lg border border-border bg-background',
+                'flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-background',
                 isFullscreen && 'h-screen rounded-none border-0',
                 className,
             )}
@@ -481,13 +481,13 @@ function PdfReaderView({
                 onLoadSuccess={handleLoadSuccess}
                 onLoadError={(error: Error) => setLoadError(error.message)}
                 loading={
-                    <div className="flex min-h-96 flex-1 flex-col items-center justify-center gap-3 text-muted-foreground">
+                    <div className="flex w-full min-h-96 flex-1 flex-col items-center justify-center gap-3 text-muted-foreground">
                         <Loader2 className="size-6 animate-spin" />
                         <p className="text-sm">Loading document…</p>
                     </div>
                 }
                 error={
-                    <div className="flex min-h-96 flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+                    <div className="flex w-full min-h-96 flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
                         <FileWarning className="size-8 text-destructive" />
                         <div>
                             <p className="font-medium">
@@ -505,7 +505,7 @@ function PdfReaderView({
                         </Button>
                     </div>
                 }
-                className="flex min-h-0 flex-1"
+                className="flex min-h-0 w-full flex-1 overflow-hidden"
             >
                 {showThumbnails && pageCount > 0 ? (
                     <PdfThumbnails
@@ -517,7 +517,7 @@ function PdfReaderView({
 
                 <div
                     ref={setScrollElement}
-                    className="flex-1 overflow-auto overscroll-contain bg-muted/40 p-6 dark:bg-muted/20"
+                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-muted/40 p-6 dark:bg-muted/20"
                 >
                     <div className="flex flex-col items-center gap-6">
                         {Array.from({ length: pageCount }, (_, index) => (

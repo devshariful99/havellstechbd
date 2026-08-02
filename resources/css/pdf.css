@@ -5,7 +5,10 @@
 
 .react-pdf__Document {
     display: flex;
+    flex: 1 1 0%;
+    width: 100%;
     min-height: 0;
+    overflow: hidden;
 }
 
 .react-pdf__Page {
