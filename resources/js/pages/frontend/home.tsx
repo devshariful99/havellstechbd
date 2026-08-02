@@ -1,10 +1,9 @@
-import { Head } from '@inertiajs/react';
-
 import Approved from '@/components/home/approved';
 import BrandPartner from '@/components/home/brand-partner';
 import Hero from '@/components/home/hero';
 import OurAchievements from '@/components/home/our-achievements';
 import Products from '@/components/home/products';
+import SeoHead from '@/components/seo-head';
 import FrontendLayout from '@/layouts/frontend-layout';
 import type {
     Achievement,
@@ -42,7 +41,7 @@ export default function Home({
 
     return (
         <FrontendLayout>
-            <Head title="Home" />
+            <SeoHead homepage />
             <Hero images={heroImages} />
             <Products products={products} />
             <OurAchievements achievements={achievements} />

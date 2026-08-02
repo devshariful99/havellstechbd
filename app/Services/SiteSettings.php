@@ -17,6 +17,7 @@ class SiteSettings
     public const KEYS = [
         'site_name',
         'site_tagline',
+        'site_description',
         'primary_phone',
         'primary_email',
         'contact_email',
@@ -93,6 +94,7 @@ class SiteSettings
      * @return array{
      *     site_name: string,
      *     site_tagline: string|null,
+     *     site_description: string|null,
      *     phone: string|null,
      *     email: string|null,
      *     social: array<string, string>
@@ -103,6 +105,7 @@ class SiteSettings
         return [
             'site_name' => $this->get('site_name', config('app.name')) ?? config('app.name'),
             'site_tagline' => $this->get('site_tagline'),
+            'site_description' => $this->get('site_description', $this->defaultDescription()),
             'phone' => $this->get('primary_phone', config('contact.primary_phone')),
             'email' => $this->get('primary_email', config('contact.primary_email')),
             'social' => array_filter([
@@ -124,7 +127,8 @@ class SiteSettings
     {
         return match ($key) {
             'site_name' => config('app.name'),
-            'site_tagline' => null,
+            'site_tagline' => 'Industrial electrical solutions for Bangladesh',
+            'site_description' => $this->defaultDescription(),
             'primary_phone' => config('contact.primary_phone'),
             'primary_email' => config('contact.primary_email'),
             'contact_email' => config('mail.from.address'),
@@ -133,5 +137,10 @@ class SiteSettings
             'linkedin_url' => config('contact.social.linkedin'),
             default => null,
         };
+    }
+
+    private function defaultDescription(): string
+    {
+        return 'HavellsTech Power Engineering delivers industrial electrical products, power systems, and certified engineering solutions for factories and infrastructure across Bangladesh.';
     }
 }

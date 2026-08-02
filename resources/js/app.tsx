@@ -14,10 +14,25 @@ import ScrollToTop from './components/ui/scroll-to-top';
 import { initializeTheme } from './hooks/use-appearance';
 import { ErrorObservabilityProvider } from './lib/errors/error-context';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName =
+    import.meta.env.VITE_APP_NAME &&
+    import.meta.env.VITE_APP_NAME !== 'Laravel'
+        ? import.meta.env.VITE_APP_NAME
+        : 'HavellsTech Power Engineering';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => {
+        if (!title || title === appName) {
+            return appName;
+        }
+
+        // Full SEO titles (e.g. brand | tagline) already include the site name.
+        if (title.includes(appName)) {
+            return title;
+        }
+
+        return `${title} - ${appName}`;
+    },
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.tsx`,

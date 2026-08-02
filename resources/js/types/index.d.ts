@@ -57,6 +57,7 @@ export interface SharedData {
 export interface ContactDetails {
     site_name?: string;
     site_tagline?: string | null;
+    site_description?: string | null;
     phone: string | null;
     email: string | null;
     social: Partial<Record<'facebook' | 'twitter' | 'linkedin', string>>;

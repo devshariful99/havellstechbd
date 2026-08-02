@@ -17,6 +17,7 @@ import AdminLayout from '@/layouts/admin-layout';
 export interface SiteSettingsForm {
     site_name: string;
     site_tagline: string;
+    site_description: string;
     primary_phone: string;
     primary_email: string;
     contact_email: string;
@@ -33,6 +34,7 @@ export default function Edit({ settings }: Props) {
     const { data, setData, put, processing, errors } = useForm<SiteSettingsForm>({
         site_name: settings.site_name ?? '',
         site_tagline: settings.site_tagline ?? '',
+        site_description: settings.site_description ?? '',
         primary_phone: settings.primary_phone ?? '',
         primary_email: settings.primary_email ?? '',
         contact_email: settings.contact_email ?? '',
@@ -93,6 +95,31 @@ export default function Edit({ settings }: Props) {
                                 placeholder="Short supporting line for the brand"
                             />
                             <InputError message={errors.site_tagline} />
+                        </div>
+
+                        <div className="grid gap-2 md:col-span-2">
+                            <Label htmlFor="site_description">
+                                SEO description
+                            </Label>
+                            <textarea
+                                id="site_description"
+                                value={data.site_description}
+                                onChange={(event) =>
+                                    setData(
+                                        'site_description',
+                                        event.target.value,
+                                    )
+                                }
+                                rows={3}
+                                maxLength={320}
+                                placeholder="Shown under your site title in Google search results"
+                                className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+                            />
+                            <p className="text-muted-foreground text-xs">
+                                Aim for 140–160 characters for the best Google
+                                snippet.
+                            </p>
+                            <InputError message={errors.site_description} />
                         </div>
                     </CardContent>
                 </Card>

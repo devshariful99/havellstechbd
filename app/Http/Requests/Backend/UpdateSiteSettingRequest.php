@@ -25,6 +25,7 @@ class UpdateSiteSettingRequest extends FormRequest
         return [
             'site_name' => ['required', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:255'],
+            'site_description' => ['nullable', 'string', 'max:320'],
             'primary_phone' => ['nullable', 'string', 'max:50'],
             'primary_email' => ['nullable', 'email', 'max:255'],
             'contact_email' => ['nullable', 'email', 'max:255'],

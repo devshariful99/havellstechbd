@@ -1,8 +1,7 @@
-import { Head } from '@inertiajs/react';
-
 import ContactSection from '@/components/contact/contact';
 import Hero from '@/components/contact/hero';
 import Map from '@/components/contact/map';
+import SeoHead from '@/components/seo-head';
 import FrontendLayout from '@/layouts/frontend-layout';
 import type { ContactPageData } from '@/types';
 
@@ -13,7 +12,7 @@ interface ContactPageProps {
 export default function Contact({ contactData }: ContactPageProps) {
     return (
         <FrontendLayout>
-            <Head title={contactData.hero_title || 'Contact Page'} />
+            <SeoHead title={contactData.hero_title || 'Contact'} />
             <Hero
                 title={contactData.hero_title}
                 breadcrumb={contactData.hero_breadcrumb}

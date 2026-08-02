@@ -36,6 +36,7 @@ test('admins can update site settings', function () {
         ->put(route('admin.settings.update'), [
             'site_name' => 'Techno Power BD',
             'site_tagline' => 'Industrial excellence',
+            'site_description' => 'Techno Power BD supplies industrial electrical systems across Bangladesh.',
             'primary_phone' => '01700000000',
             'primary_email' => 'hello@techno.test',
             'contact_email' => 'inbox@techno.test',
@@ -52,6 +53,7 @@ test('admins can update site settings', function () {
     $settings = app(SiteSettings::class);
 
     expect($settings->get('site_name'))->toBe('Techno Power BD')
+        ->and($settings->get('site_description'))->toBe('Techno Power BD supplies industrial electrical systems across Bangladesh.')
         ->and($settings->get('primary_phone'))->toBe('01700000000')
         ->and($settings->contactRecipient())->toBe('inbox@techno.test')
         ->and($settings->publicPayload()['social'])->toMatchArray([
@@ -85,6 +87,7 @@ test('site settings validation rejects invalid emails and urls', function () {
 test('updated contact details are shared with inertia', function () {
     app(SiteSettings::class)->update([
         'site_name' => 'Shared Name',
+        'site_description' => 'Shared SEO description for search engines.',
         'primary_phone' => '0999888777',
         'primary_email' => 'public@techno.test',
         'facebook_url' => 'https://facebook.com/shared',
@@ -97,7 +100,25 @@ test('updated contact details are shared with inertia', function () {
             ->where('name', 'Shared Name')
             ->where('contactDetails.phone', '0999888777')
             ->where('contactDetails.email', 'public@techno.test')
+            ->where('contactDetails.site_description', 'Shared SEO description for search engines.')
             ->where('contactDetails.social.facebook', 'https://facebook.com/shared'));
+});
+
+test('the home page html includes brand title and seo description', function () {
+    app(SiteSettings::class)->update([
+        'site_name' => 'HavellsTech Power Engineering',
+        'site_description' => 'HavellsTech Power Engineering delivers industrial electrical products and certified engineering solutions across Bangladesh.',
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('<title inertia>HavellsTech Power Engineering</title>', false)
+        ->assertSee(
+            'HavellsTech Power Engineering delivers industrial electrical products and certified engineering solutions across Bangladesh.',
+            false,
+        )
+        ->assertDontSee('Laravel: Home', false)
+        ->assertDontSee('>Laravel</title>', false);
 });
 
 test('contact form mails the configured recipient', function () {
