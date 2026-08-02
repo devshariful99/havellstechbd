@@ -24,6 +24,10 @@ test('the contact page renders with managed office details', function () {
             ->has('contactData.phones')
             ->has('contactData.hero_title')
             ->has('contactData.map_embed_url')
+            ->has('contactData.form_name_placeholder')
+            ->has('contactData.form_email_placeholder')
+            ->has('contactData.form_phone_placeholder')
+            ->has('contactData.form_message_placeholder')
             ->where('contactData.offices.0.title', 'Corporate Office')
             ->where('contactData.offices.1.title', 'Factory')
             ->where('contactData.offices.2.title', 'Wire House'));

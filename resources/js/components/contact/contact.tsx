@@ -12,6 +12,31 @@ interface ContactProps {
     contactData: ContactPageData;
 }
 
+const fieldClassName = cn(
+    'h-12',
+    'w-full',
+    'rounded-md',
+    'border-2',
+    'border-[#d4d4d4]',
+    'bg-white',
+    'px-4',
+    'text-sm',
+    'text-[#333333]',
+    'caret-[#333333]',
+    'placeholder:text-[#6b7280]',
+    'focus:border-[#c3102e]',
+    'focus:outline-none',
+    '[color-scheme:light]',
+);
+
+const textareaClassName = cn(
+    fieldClassName,
+    'h-auto',
+    'min-h-24',
+    'resize-y',
+    'py-3',
+);
+
 export default function Contact({ contactData }: ContactProps) {
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -162,8 +187,12 @@ export default function Contact({ contactData }: ContactProps) {
                         'rounded-2xl',
                         'border',
                         'border-[#c3102e]',
+                        'bg-white',
                         'p-8',
-                        !hasOffices && !hasPhones ? 'lg:max-w-xl lg:mx-auto' : '',
+                        '[color-scheme:light]',
+                        !hasOffices && !hasPhones
+                            ? 'lg:mx-auto lg:max-w-xl'
+                            : '',
                     )}
                     initial={{ opacity: 0, x: 50 }}
                     animate={
@@ -194,14 +223,7 @@ export default function Contact({ contactData }: ContactProps) {
                                         contactData.form_name_placeholder ||
                                         'Your Name'
                                     }
-                                    className={cn(
-                                        'h-12',
-                                        'w-full',
-                                        'border-2',
-                                        'px-4',
-                                        'text-sm',
-                                        'focus:outline-none',
-                                    )}
+                                    className={fieldClassName}
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={
                                         isVisible
@@ -218,14 +240,7 @@ export default function Contact({ contactData }: ContactProps) {
                                         contactData.form_email_placeholder ||
                                         'Your Email'
                                     }
-                                    className={cn(
-                                        'h-12',
-                                        'w-full',
-                                        'border-2',
-                                        'px-4',
-                                        'text-sm',
-                                        'focus:outline-none',
-                                    )}
+                                    className={fieldClassName}
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={
                                         isVisible
@@ -242,14 +257,7 @@ export default function Contact({ contactData }: ContactProps) {
                                         contactData.form_phone_placeholder ||
                                         'Phone Number'
                                     }
-                                    className={cn(
-                                        'h-12',
-                                        'w-full',
-                                        'border-2',
-                                        'px-4',
-                                        'text-sm',
-                                        'focus:outline-none',
-                                    )}
+                                    className={fieldClassName}
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={
                                         isVisible
@@ -266,14 +274,7 @@ export default function Contact({ contactData }: ContactProps) {
                                         'Message'
                                     }
                                     rows={3}
-                                    className={cn(
-                                        'w-full',
-                                        'border-2',
-                                        'px-4',
-                                        'py-3',
-                                        'text-sm',
-                                        'focus:outline-none',
-                                    )}
+                                    className={textareaClassName}
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={
                                         isVisible
