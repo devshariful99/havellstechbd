@@ -18,5 +18,6 @@ class Approved extends Model
         'title',
         'image',
         'file',
+        'link',
     ];
 }

@@ -23,6 +23,7 @@ class ApprovedFactory extends Factory
             'title' => fake()->words(3, true),
             'file' => 'approved/files/'.$slug.'.pdf',
             'image' => 'approved/images/'.$slug.'.jpg',
+            'link' => null,
         ];
     }
 
@@ -33,6 +34,16 @@ class ApprovedFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'file' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the certificate opens an external URL.
+     */
+    public function withLink(?string $url = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'link' => $url ?? fake()->url(),
         ]);
     }
 }

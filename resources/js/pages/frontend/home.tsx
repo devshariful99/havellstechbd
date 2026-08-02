@@ -7,6 +7,7 @@ import OurAchievements from '@/components/home/our-achievements';
 import Products from '@/components/home/products';
 import FrontendLayout from '@/layouts/frontend-layout';
 import type {
+    Achievement,
     DownloadableItem,
     Hero as HeroModel,
     OurPartner,
@@ -15,6 +16,7 @@ import type {
 interface Props {
     heros: HeroModel[];
     products: DownloadableItem[];
+    achievements: Achievement[];
     ourPartners: OurPartner[];
     approveds: DownloadableItem[];
 }
@@ -27,6 +29,7 @@ function publicAsset(path: string): string {
 export default function Home({
     heros,
     products,
+    achievements,
     ourPartners,
     approveds,
 }: Props) {
@@ -42,7 +45,7 @@ export default function Home({
             <Head title="Home" />
             <Hero images={heroImages} />
             <Products products={products} />
-            <OurAchievements />
+            <OurAchievements achievements={achievements} />
             <BrandPartner partners={ourPartners} />
             <Approved approveds={approveds} />
         </FrontendLayout>

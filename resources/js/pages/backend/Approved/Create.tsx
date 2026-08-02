@@ -11,6 +11,7 @@ import AdminLayout from '@/layouts/admin-layout';
 export default function ApprovedCreate() {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
+        link: '',
         file: null as File | null,
         image: null as File | null,
     });
@@ -41,7 +42,7 @@ export default function ApprovedCreate() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="title">Title</Label>
+                                <Label htmlFor="title">Title (optional)</Label>
                                 <Input
                                     id="title"
                                     type="text"
@@ -49,27 +50,32 @@ export default function ApprovedCreate() {
                                     onChange={(e) =>
                                         setData('title', e.target.value)
                                     }
-                                    required
                                 />
                                 <InputError message={errors.title} />
                             </div>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="link">
+                                    External link (optional)
+                                </Label>
+                                <Input
+                                    id="link"
+                                    type="url"
+                                    value={data.link}
+                                    onChange={(e) =>
+                                        setData('link', e.target.value)
+                                    }
+                                    placeholder="https://example.com"
+                                />
+                                <p className="text-muted-foreground text-sm">
+                                    If set, clicking the image opens this URL in
+                                    a new tab. Otherwise a PDF opens the preview
+                                    page when attached.
+                                </p>
+                                <InputError message={errors.link} />
+                            </div>
+
                             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="file">File (PDF)</Label>
-                                    <FileUpload
-                                        value={data.file}
-                                        onChange={(file) =>
-                                            setData(
-                                                'file',
-                                                file as File | null,
-                                            )
-                                        }
-                                        accept="application/pdf,.pdf"
-                                        error={errors.file}
-                                    />
-                                    <InputError message={errors.file} />
-                                </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="image">Image</Label>
                                     <FileUpload
@@ -84,6 +90,23 @@ export default function ApprovedCreate() {
                                         error={errors.image}
                                     />
                                     <InputError message={errors.image} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="file">
+                                        File (PDF, optional)
+                                    </Label>
+                                    <FileUpload
+                                        value={data.file}
+                                        onChange={(file) =>
+                                            setData(
+                                                'file',
+                                                file as File | null,
+                                            )
+                                        }
+                                        accept="application/pdf,.pdf"
+                                        error={errors.file}
+                                    />
+                                    <InputError message={errors.file} />
                                 </div>
                             </div>
                         </div>

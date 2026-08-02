@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Achievement;
 use App\Models\Approved;
 use App\Models\Hero;
 use App\Models\OurPartner;
@@ -20,6 +21,12 @@ test('the home page renders for authenticated users', function () {
 test('the home page exposes content with download links', function () {
     Hero::factory()->create(['title' => 'Powering Progress']);
     OurPartner::factory()->create();
+    Achievement::factory()->create([
+        'icon' => 'database',
+        'value' => 800,
+        'suffix' => '+',
+        'title' => 'Projects',
+    ]);
     $product = Product::factory()->create(['file' => 'products/files/spec.pdf']);
     $approved = Approved::factory()->create(['file' => 'approved/files/cert.pdf']);
 
@@ -29,8 +36,25 @@ test('the home page exposes content with download links', function () {
             ->component('frontend/home')
             ->has('heros', 1)
             ->has('ourPartners', 1)
+            ->has('achievements', 1)
+            ->where('achievements.0.title', 'Projects')
+            ->where('achievements.0.value', 800)
             ->where('products.0.downloadLink', '/storage/'.$product->file)
             ->where('approveds.0.downloadLink', '/storage/'.$approved->file)
+            ->where('approveds.0.link', null)
+        );
+});
+
+test('the home page exposes approved external links', function () {
+    Approved::factory()->withLink('https://example.com/cert')->create([
+        'file' => null,
+    ]);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('approveds.0.link', 'https://example.com/cert')
+            ->where('approveds.0.downloadLink', null)
         );
 });
 

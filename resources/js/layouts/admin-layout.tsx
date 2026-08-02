@@ -26,6 +26,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         if (cleanUrl.includes('/contact-page')) return 'contact-page';
         if (cleanUrl.includes('/hero')) return 'hero';
         if (cleanUrl.includes('/product')) return 'product';
+        if (cleanUrl.includes('/achievements')) return 'achievement';
         if (cleanUrl.includes('/our-partner')) return 'our-partner';
         if (cleanUrl.includes('/approved')) return 'approved';
         
@@ -37,7 +38,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             !cleanUrl.includes('/contact-messages') &&
             !cleanUrl.includes('/contact-page') &&
             !cleanUrl.includes('/hero') && 
-            !cleanUrl.includes('/product') && 
+            !cleanUrl.includes('/product') &&
+            !cleanUrl.includes('/achievements') &&
             !cleanUrl.includes('/our-partner') && 
             !cleanUrl.includes('/approved')) {
             return 'submenu';

@@ -93,6 +93,25 @@ export default function View({ approved }: Props) {
                                 </div>
                                 <div className="flex items-center justify-between gap-4">
                                     <dt className="text-muted-foreground">
+                                        External link
+                                    </dt>
+                                    <dd className="max-w-[60%] truncate text-right">
+                                        {approved.link ? (
+                                            <a
+                                                href={approved.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-primary underline-offset-4 hover:underline"
+                                            >
+                                                {approved.link}
+                                            </a>
+                                        ) : (
+                                            <Badge variant="outline">None</Badge>
+                                        )}
+                                    </dd>
+                                </div>
+                                <div className="flex items-center justify-between gap-4">
+                                    <dt className="text-muted-foreground">
                                         Created
                                     </dt>
                                     <dd>{formatDate(approved.created_at)}</dd>

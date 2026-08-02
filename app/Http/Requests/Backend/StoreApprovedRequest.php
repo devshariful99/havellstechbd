@@ -24,8 +24,9 @@ class StoreApprovedRequest extends FormRequest
     {
         return [
             'title' => ['nullable', 'string', 'max:255'],
-            'file' => ['required', 'file', 'mimes:pdf'],
+            'file' => ['nullable', 'file', 'mimes:pdf'],
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif'],
+            'link' => ['nullable', 'url', 'max:2048'],
         ];
     }
 
@@ -37,10 +38,10 @@ class StoreApprovedRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'file.required' => 'The file field is required.',
             'file.mimes' => 'The file must be a PDF document.',
             'image.required' => 'The image field is required.',
             'image.image' => 'The image must be a valid image file.',
+            'link.url' => 'The link must be a valid URL.',
         ];
     }
 }

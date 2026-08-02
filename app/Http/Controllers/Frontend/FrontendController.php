@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Achievement;
 use App\Models\Approved;
 use App\Models\Hero;
 use App\Models\OurPartner;
@@ -27,17 +28,21 @@ class FrontendController extends Controller
                     'image' => $product->image,
                     'downloadLink' => $product->file ? '/storage/'.$product->file : null,
                 ]),
+            'achievements' => Achievement::query()
+                ->ordered()
+                ->get(['id', 'icon', 'value', 'suffix', 'title']),
             'ourPartners' => OurPartner::query()
                 ->latest()
                 ->get(['id', 'title', 'image']),
             'approveds' => Approved::query()
                 ->latest()
-                ->get(['id', 'title', 'image', 'file'])
+                ->get(['id', 'title', 'image', 'file', 'link'])
                 ->map(fn (Approved $approved): array => [
                     'id' => $approved->id,
                     'title' => $approved->title,
                     'image' => $approved->image,
                     'downloadLink' => $approved->file ? '/storage/'.$approved->file : null,
+                    'link' => $approved->link,
                 ]),
         ]);
     }

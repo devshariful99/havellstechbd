@@ -141,6 +141,18 @@ export interface Approved extends Record<string, unknown> {
     title: string | null;
     file: string | null;
     image: string | null;
+    link: string | null;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Achievement extends Record<string, unknown> {
+    id: number;
+    icon: string;
+    value: number;
+    suffix: string | null;
+    title: string;
+    sort_order?: number;
     created_at?: string;
     updated_at?: string;
 }
@@ -202,6 +214,7 @@ export interface DownloadableItem {
     title: string | null;
     image: string | null;
     downloadLink: string | null;
+    link?: string | null;
 }
 
 export interface NavItemProps {

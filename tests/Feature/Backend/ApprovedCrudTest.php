@@ -28,23 +28,42 @@ test('admins can create an approved certificate', function () {
             'title' => 'ISO 9001',
             'file' => UploadedFile::fake()->create('cert.pdf', 100, 'application/pdf'),
             'image' => UploadedFile::fake()->image('cert.jpg'),
+            'link' => 'https://example.com/iso',
         ])
         ->assertRedirect(route('admin.approved.index'))
         ->assertSessionHas('success');
 
     $approved = Approved::sole();
 
-    expect($approved->title)->toBe('ISO 9001');
+    expect($approved->title)->toBe('ISO 9001')
+        ->and($approved->link)->toBe('https://example.com/iso');
     Storage::disk('public')->assertExists($approved->file);
     Storage::disk('public')->assertExists($approved->image);
 });
 
-test('an approved certificate requires both a pdf and an image', function () {
+test('an approved certificate requires an image but not a pdf', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.approved.store'), ['title' => 'Incomplete'])
-        ->assertSessionHasErrors(['file', 'image']);
+        ->assertSessionHasErrors(['image'])
+        ->assertSessionDoesntHaveErrors(['file']);
 
     expect(Approved::count())->toBe(0);
+});
+
+test('admins can create an approved certificate with only an image', function () {
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.approved.store'), [
+            'image' => UploadedFile::fake()->image('badge.jpg'),
+        ])
+        ->assertRedirect(route('admin.approved.index'))
+        ->assertSessionHas('success');
+
+    $approved = Approved::sole();
+
+    expect($approved->title)->toBeNull()
+        ->and($approved->file)->toBeNull()
+        ->and($approved->link)->toBeNull();
+    Storage::disk('public')->assertExists($approved->image);
 });
 
 test('an approved certificate can be updated without re-uploading files', function () {

@@ -108,14 +108,35 @@ export default function Approved({ approveds }: ApprovedProps) {
                                 </motion.div>
                             );
 
-                            if (!approved.downloadLink) {
-                                return (
-                                    <SwiperSlide
-                                        key={approved.id}
-                                        style={{ height: 'auto' }}
+                            const focusClass =
+                                'block w-full cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-[#c3102e] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none';
+
+                            let content = card;
+
+                            if (approved.link) {
+                                content = (
+                                    <a
+                                        href={approved.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`Open ${label}`}
+                                        className={focusClass}
                                     >
                                         {card}
-                                    </SwiperSlide>
+                                    </a>
+                                );
+                            } else if (approved.downloadLink) {
+                                content = (
+                                    <Link
+                                        href={route(
+                                            'documents.approved',
+                                            approved.id,
+                                        )}
+                                        aria-label={`View ${label}`}
+                                        className={focusClass}
+                                    >
+                                        {card}
+                                    </Link>
                                 );
                             }
 
@@ -124,16 +145,7 @@ export default function Approved({ approveds }: ApprovedProps) {
                                     key={approved.id}
                                     style={{ height: 'auto' }}
                                 >
-                                    <Link
-                                        href={route(
-                                            'documents.approved',
-                                            approved.id,
-                                        )}
-                                        aria-label={`View ${label}`}
-                                        className="block w-full cursor-pointer text-left focus-visible:ring-2 focus-visible:ring-[#c3102e] focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none"
-                                    >
-                                        {card}
-                                    </Link>
+                                    {content}
                                 </SwiperSlide>
                             );
                         })}

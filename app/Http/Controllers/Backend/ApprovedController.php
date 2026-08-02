@@ -25,7 +25,7 @@ class ApprovedController extends Controller
     public function index(): Response
     {
         $result = $this->dataTableService->process(Approved::query(), request(), [
-            'searchable' => ['title', 'file'],
+            'searchable' => ['title', 'file', 'link'],
             'sortable' => ['id', 'title', 'file', 'created_at'],
             'filterable' => [],
         ]);
@@ -50,8 +50,11 @@ class ApprovedController extends Controller
     {
         $approved = new Approved;
         $approved->title = $request->input('title');
-        $approved->file = $request->file('file')->store(self::FILE_DIRECTORY, 'public');
+        $approved->link = $request->input('link');
         $approved->image = $request->file('image')->store(self::IMAGE_DIRECTORY, 'public');
+        $approved->file = $request->hasFile('file')
+            ? $request->file('file')->store(self::FILE_DIRECTORY, 'public')
+            : null;
         $approved->save();
 
         return redirect()->route('admin.approved.index')->with('success', 'Approved created successfully.');
@@ -67,6 +70,7 @@ class ApprovedController extends Controller
     public function update(UpdateApprovedRequest $request, Approved $approved): RedirectResponse
     {
         $approved->title = $request->input('title');
+        $approved->link = $request->input('link');
 
         if ($request->hasFile('file')) {
             $this->deleteStoredFile($approved->file);
@@ -79,9 +83,6 @@ class ApprovedController extends Controller
         if ($request->hasFile('image')) {
             $this->deleteStoredFile($approved->image);
             $approved->image = $request->file('image')->store(self::IMAGE_DIRECTORY, 'public');
-        } elseif ($request->shouldRemoveImage()) {
-            $this->deleteStoredFile($approved->image);
-            $approved->image = null;
         }
 
         $approved->save();

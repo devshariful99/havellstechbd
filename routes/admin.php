@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\AchievementController;
 use App\Http\Controllers\Backend\Admin\AdminDashboardController;
 use App\Http\Controllers\Backend\Admin\AdminLoginController;
 use App\Http\Controllers\Backend\ApprovedController;
@@ -99,6 +100,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/approved/update/{approved}', 'update')->name('approved.update');
             Route::get('/approved/view/{approved}', 'view')->name('approved.view');
             Route::delete('/approved/destroy/{approved}', 'destroy')->name('approved.destroy');
+        });
+
+        Route::controller(AchievementController::class)->group(function () {
+            Route::get('/achievements', 'index')->name('achievement.index');
+            Route::get('/achievements/create', 'create')->name('achievement.create');
+            Route::post('/achievements', 'store')->name('achievement.store');
+            Route::get('/achievements/{achievement}/edit', 'edit')->name('achievement.edit');
+            Route::put('/achievements/{achievement}', 'update')->name('achievement.update');
+            Route::delete('/achievements/{achievement}', 'destroy')->name('achievement.destroy');
         });
     });
 });

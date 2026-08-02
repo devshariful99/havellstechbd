@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             FooterLinkSeeder::class,
             ContactPageSettingSeeder::class,
+            AchievementSeeder::class,
         ]);
     }
 }

@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/react';
 import {
     Award,
+    BarChart3,
     Cylinder,
     Image as ImageIcon,
     LayoutGrid,
@@ -41,6 +42,12 @@ const adminNavItems: NavItem[] = [
         href: route('admin.product.index'),
         icon: Cylinder,
         slug: 'product',
+    },
+    {
+        title: 'Achievements',
+        href: route('admin.achievement.index'),
+        icon: BarChart3,
+        slug: 'achievement',
     },
     {
         title: 'Our Partner Management',
