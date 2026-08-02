@@ -401,36 +401,76 @@
   scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
 }
 
-/* Swiper Navigation Styling */
+/* Swiper Navigation Styling — wide landscape banner on mobile (competitor-style) */
 .hero-swiper .swiper-button-next,
 .hero-swiper .swiper-button-prev {
   color: #c3102e !important;
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin-top: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: rgb(255 255 255 / 0.85) !important;
+  border-radius: 9999px !important;
   transition: all 0.3s ease !important;
+}
+
+.hero-swiper .swiper-button-next {
+  right: 8px !important;
+}
+
+.hero-swiper .swiper-button-prev {
+  left: 8px !important;
 }
 
 .hero-swiper .swiper-button-next:hover,
 .hero-swiper .swiper-button-prev:hover {
   color: white !important;
-  transform: scale(1.1) !important;
+  background: #c3102e !important;
 }
 
 .hero-swiper .swiper-button-next::after,
 .hero-swiper .swiper-button-prev::after {
-  font-size: 18px !important;
+  font-size: 12px !important;
   font-weight: bold !important;
+}
+
+.hero-swiper .swiper-pagination {
+  bottom: 8px !important;
 }
 
 .hero-swiper .swiper-pagination-bullet {
   opacity: 1 !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: rgb(255 255 255 / 0.7) !important;
   transition: all 0.3s ease !important;
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
   background: #c3102e !important;
-  transform: scale(1.2) !important;
+  transform: scale(1.15) !important;
+}
+
+@media (min-width: 768px) {
+  .hero-swiper .swiper-button-next,
+  .hero-swiper .swiper-button-prev {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .hero-swiper .swiper-button-next::after,
+  .hero-swiper .swiper-button-prev::after {
+    font-size: 16px !important;
+  }
+
+  .hero-swiper .swiper-button-next {
+    right: 16px !important;
+  }
+
+  .hero-swiper .swiper-button-prev {
+    left: 16px !important;
+  }
 }
 
 /* Global scrollbar styling */
