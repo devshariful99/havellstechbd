@@ -12,30 +12,9 @@ interface ContactProps {
     contactData: ContactPageData;
 }
 
-const fieldClassName = cn(
-    'h-12',
-    'w-full',
-    'rounded-md',
-    'border-2',
-    'border-[#d4d4d4]',
-    'bg-white',
-    'px-4',
-    'text-sm',
-    'text-[#333333]',
-    'caret-[#333333]',
-    'placeholder:text-[#6b7280]',
-    'focus:border-[#c3102e]',
-    'focus:outline-none',
-    '[color-scheme:light]',
-);
+const fieldClassName = cn('contact-form-field');
 
-const textareaClassName = cn(
-    fieldClassName,
-    'h-auto',
-    'min-h-24',
-    'resize-y',
-    'py-3',
-);
+const textareaClassName = cn('contact-form-field', 'contact-form-textarea');
 
 export default function Contact({ contactData }: ContactProps) {
     const [isVisible, setIsVisible] = useState(false);
@@ -216,7 +195,12 @@ export default function Contact({ contactData }: ContactProps) {
                     >
                         {({ errors }) => (
                             <>
-                                <motion.input
+                                {/*
+                                  Plain inputs (not motion.*) so iOS Safari keeps
+                                  placeholder color visible — opacity/transform on
+                                  the control itself hides placeholders on mobile.
+                                */}
+                                <input
                                     type="text"
                                     name="name"
                                     placeholder={
@@ -224,16 +208,9 @@ export default function Contact({ contactData }: ContactProps) {
                                         'Your Name'
                                     }
                                     className={fieldClassName}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={
-                                        isVisible
-                                            ? { opacity: 1, scale: 1 }
-                                            : { opacity: 0, scale: 0.95 }
-                                    }
-                                    transition={{ duration: 0.4, delay: 0.4 }}
                                 />
                                 <InputError message={errors.name} />
-                                <motion.input
+                                <input
                                     type="email"
                                     name="email"
                                     placeholder={
@@ -241,16 +218,9 @@ export default function Contact({ contactData }: ContactProps) {
                                         'Your Email'
                                     }
                                     className={fieldClassName}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={
-                                        isVisible
-                                            ? { opacity: 1, scale: 1 }
-                                            : { opacity: 0, scale: 0.95 }
-                                    }
-                                    transition={{ duration: 0.4, delay: 0.5 }}
                                 />
                                 <InputError message={errors.email} />
-                                <motion.input
+                                <input
                                     type="text"
                                     name="phone"
                                     placeholder={
@@ -258,16 +228,9 @@ export default function Contact({ contactData }: ContactProps) {
                                         'Phone Number'
                                     }
                                     className={fieldClassName}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={
-                                        isVisible
-                                            ? { opacity: 1, scale: 1 }
-                                            : { opacity: 0, scale: 0.95 }
-                                    }
-                                    transition={{ duration: 0.4, delay: 0.6 }}
                                 />
                                 <InputError message={errors.phone} />
-                                <motion.textarea
+                                <textarea
                                     name="message"
                                     placeholder={
                                         contactData.form_message_placeholder ||
@@ -275,26 +238,10 @@ export default function Contact({ contactData }: ContactProps) {
                                     }
                                     rows={3}
                                     className={textareaClassName}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={
-                                        isVisible
-                                            ? { opacity: 1, scale: 1 }
-                                            : { opacity: 0, scale: 0.95 }
-                                    }
-                                    transition={{ duration: 0.4, delay: 0.7 }}
                                 />
                                 <InputError message={errors.message} />
-                                <motion.div
-                                    className={cn('pt-2', 'text-center')}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={
-                                        isVisible
-                                            ? { opacity: 1, y: 0 }
-                                            : { opacity: 0, y: 20 }
-                                    }
-                                    transition={{ duration: 0.4, delay: 0.8 }}
-                                >
-                                    <motion.button
+                                <div className={cn('pt-2', 'text-center')}>
+                                    <button
                                         type="submit"
                                         className={cn(
                                             'min-w-32',
@@ -307,13 +254,11 @@ export default function Contact({ contactData }: ContactProps) {
                                             'transition',
                                             'hover:bg-[#5d0b0e]',
                                         )}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
                                     >
                                         {contactData.form_submit_label ||
                                             'Submit'}
-                                    </motion.button>
-                                </motion.div>
+                                    </button>
+                                </div>
                             </>
                         )}
                     </Form>

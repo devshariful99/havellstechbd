@@ -401,6 +401,62 @@
   scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
 }
 
+/*
+ * Contact form fields — explicit colors so mobile Safari (dark mode /
+ * color-scheme) cannot wash out placeholders the way desktop Chrome does not.
+ */
+.contact-form-field {
+  height: 3rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 2px solid #d4d4d4;
+  background-color: #ffffff !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #333333 !important;
+  caret-color: #333333;
+  color-scheme: light;
+  outline: none;
+}
+
+.contact-form-field:focus {
+  border-color: #c3102e;
+}
+
+.contact-form-field::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+.contact-form-field::-webkit-input-placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+.contact-form-field::-moz-placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.contact-form-field:-webkit-autofill,
+.contact-form-field:-webkit-autofill:hover,
+.contact-form-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: #333333;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+.contact-form-textarea {
+  height: auto;
+  min-height: 6rem;
+  resize: vertical;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
 /* Swiper Navigation Styling — wide landscape banner on mobile (competitor-style) */
 .hero-swiper .swiper-button-next,
 .hero-swiper .swiper-button-prev {
