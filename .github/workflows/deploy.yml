@@ -106,6 +106,14 @@ jobs:
             deploy-bundle/storage/logs \
             deploy-bundle/bootstrap/cache
 
+          # Hostinger disables proc_open, so package:discover cannot run on the server.
+          # Ship the discovery cache generated during the CI composer install instead.
+          test -f bootstrap/cache/packages.php
+          cp -f bootstrap/cache/packages.php deploy-bundle/bootstrap/cache/packages.php
+          if [ -f bootstrap/cache/services.php ]; then
+            cp -f bootstrap/cache/services.php deploy-bundle/bootstrap/cache/services.php
+          fi
+
           test -d deploy-bundle/public/build
 
       - name: Upload files over SCP
@@ -151,7 +159,9 @@ jobs:
               exit 1
             fi
 
-            $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+            # --no-scripts: Hostinger disables proc_open; artisan package:discover would fail.
+            # packages.php is uploaded from CI instead.
+            $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
             php artisan migrate --force
 
