@@ -32,7 +32,7 @@ test('admins can create a partner', function () {
     $this->actingAs($this->admin, 'admin')
         ->post(route('admin.our-partner.store'), [
             'title' => 'Caterpillar',
-            'image' => UploadedFile::fake()->image('logo.png'),
+            'image' => UploadedFile::fake()->image('logo.jpeg'),
         ])
         ->assertRedirect(route('admin.our-partner.index'))
         ->assertSessionHas('success');

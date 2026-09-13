@@ -66,7 +66,7 @@ export default function Index({
           className="flex justify-center"
         >
           <img
-            src={approved.image ? `/storage/${approved.image}` : '/logo.png'}
+            src={approved.image ? `/storage/${approved.image}` : '/logo.jpeg'}
             alt={approved.title || 'Certificate'}
             loading="lazy"
             className="h-24 w-auto object-cover"

@@ -65,7 +65,7 @@ export default function ProductIndex({
           className="flex justify-center"
         >
           <img
-            src={product.image ? `/storage/${product.image}` : '/logo.png'}
+            src={product.image ? `/storage/${product.image}` : '/logo.jpeg'}
             alt={product.title || 'Product'}
             loading="lazy"
             className="h-24 w-auto object-cover"

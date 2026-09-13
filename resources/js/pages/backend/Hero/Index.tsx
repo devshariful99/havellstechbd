@@ -46,7 +46,7 @@ export default function HeroIndex({
       render: (hero) => (
         <div className="flex justify-center">
           <img
-            src={hero.image ? `/${hero.image}` : '/logo.png'}
+            src={hero.image ? `/${hero.image}` : '/logo.jpeg'}
             alt={hero.title || 'Hero slide'}
             loading="lazy"
             className="h-[200px] w-auto object-cover"
