@@ -87,12 +87,9 @@ export default function OurAchievements({
 
     return (
         <motion.section
-            className="relative w-full"
+            className="relative w-full bg-cover bg-center bg-no-repeat md:bg-fixed"
             style={{
                 backgroundImage: "url('/assets/images/hero/Image02.png')",
-                backgroundAttachment: 'fixed',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
             }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -105,12 +102,12 @@ export default function OurAchievements({
                 transition={{ duration: 1, delay: 0.3 }}
             />
 
-            <div className="relative z-10 container mx-auto px-6 py-16">
-                <div className="flex flex-wrap items-center justify-around gap-10">
+            <div className="relative z-10 container mx-auto px-4 py-12 sm:px-6 sm:py-16">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-12 md:grid-cols-4 md:gap-6">
                     {achievements.map((achievement, index) => (
                         <motion.div
                             key={achievement.id}
-                            className="flex flex-col items-center gap-3 text-center"
+                            className="flex min-w-0 flex-col items-center gap-2 px-1 text-center sm:gap-3 sm:px-2"
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
@@ -128,11 +125,11 @@ export default function OurAchievements({
                             >
                                 <AchievementIcon
                                     name={achievement.icon}
-                                    className="h-14 w-14 text-[#ffffff]"
+                                    className="h-10 w-10 text-white sm:h-12 sm:w-12 md:h-14 md:w-14"
                                 />
                             </motion.div>
                             <motion.h2
-                                className="text-5xl font-bold text-red-500"
+                                className="text-3xl font-bold text-[#c3102e] sm:text-4xl md:text-5xl"
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{
@@ -147,7 +144,7 @@ export default function OurAchievements({
                                 />
                             </motion.h2>
                             <motion.p
-                                className="text-base font-medium tracking-wide text-white"
+                                className="text-sm font-medium tracking-wide text-white sm:text-base"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{

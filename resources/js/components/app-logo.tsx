@@ -1,13 +1,17 @@
+import { BRAND_LOGO_ALT, BRAND_LOGO_PATH } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 
 interface AppLogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     className?: string;
 }
 
-export default function AppLogo({ className, ...props }: AppLogoProps) {
+export default function AppLogo({ className, alt, ...props }: AppLogoProps) {
     return (
-        <>
-            <img src='/assets/images/logo-2.png' alt="App Logo" className={cn("w-auto max-w-[420px] object-contain", className)} {...props} />
-        </>
+        <img
+            src={BRAND_LOGO_PATH}
+            alt={alt ?? BRAND_LOGO_ALT}
+            className={cn('h-auto w-auto max-w-[280px] object-contain', className)}
+            {...props}
+        />
     );
 }

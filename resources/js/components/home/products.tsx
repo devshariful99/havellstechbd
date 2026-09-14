@@ -1,10 +1,11 @@
 import 'swiper/css';
-import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { Link } from '@inertiajs/react';
-import { Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
-// eslint-disable-next-line import/order
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperInstance } from 'swiper/types';
 
 import type { DownloadableItem } from '@/types';
 
@@ -15,10 +16,15 @@ export default function Products({
 }: {
     products: DownloadableItem[];
 }) {
+    const swiperRef = useRef<SwiperInstance | null>(null);
+
+    if (products.length === 0) {
+        return null;
+    }
+
     return (
-        <div className={cn('container', 'mx-auto', 'py-12', 'px-4', 'mt-20')}>
+        <div className={cn('container', 'mx-auto', 'mt-20', 'px-4', 'py-12')}>
             <motion.div
-                className=""
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -26,11 +32,11 @@ export default function Products({
             >
                 <h2
                     className={cn(
-                        'text-4xl',
-                        'text-center',
-                        'text-[#c3102e]',
-                        'font-bold',
                         'mb-8',
+                        'text-center',
+                        'text-4xl',
+                        'font-bold',
+                        'text-[#c3102e]',
                     )}
                 >
                     PRODUCTS AND SERVICES
@@ -44,10 +50,18 @@ export default function Products({
                 transition={{ duration: 0.6, delay: 0.2 }}
             >
                 <Swiper
-                    modules={[Pagination]}
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                    }}
+                    modules={[Pagination, Autoplay]}
                     spaceBetween={20}
                     slidesPerView={1}
                     pagination={{ clickable: true }}
+                    autoplay={{
+                        delay: 3000,
+                        disableOnInteraction: false,
+                    }}
+                    loop={products.length > 1}
                     breakpoints={{
                         640: {
                             slidesPerView: 2,
@@ -61,54 +75,61 @@ export default function Products({
                     }}
                     className="products-swiper"
                     style={{ alignItems: 'stretch' }}
+                    onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
+                    onMouseLeave={() => swiperRef.current?.autoplay?.start()}
                 >
-                    {products.map((product, index) => (
-                        <SwiperSlide
-                            key={product.id}
-                            style={{ height: 'auto' }}
-                        >
+                    {products.map((product, index) => {
+                        const title = product.title ?? 'Product';
+                        const hasPdf = Boolean(product.downloadLink);
+
+                        const card = (
                             <motion.div
                                 className={cn(
-                                    'bg-white',
+                                    'flex',
+                                    'h-full',
+                                    'flex-col',
+                                    'overflow-hidden',
+                                    'rounded-lg',
                                     'border',
                                     'border-gray-200',
-                                    'overflow-hidden',
-                                    'h-full',
-                                    'flex',
-                                    'flex-col',
-                                    'rounded-lg',
+                                    'bg-white',
                                     'shadow-sm',
+                                    '[color-scheme:light]',
+                                    hasPdf && 'transition-shadow',
                                 )}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{
                                     duration: 0.4,
-                                    delay: index * 0.1,
+                                    delay: index * 0.05,
                                 }}
-                                whileHover={{
-                                    boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
-                                    borderColor: '#c3102e',
-                                    transition: { duration: 0.2 },
-                                }}
+                                whileHover={
+                                    hasPdf
+                                        ? {
+                                              boxShadow:
+                                                  '0 15px 30px rgba(0,0,0,0.15)',
+                                              borderColor: '#c3102e',
+                                              transition: { duration: 0.2 },
+                                          }
+                                        : undefined
+                                }
                             >
-                                {/* Image */}
                                 <div
                                     className={cn(
                                         'aspect-4/3',
                                         'overflow-hidden',
                                         'border-b',
                                         'border-gray-200',
-                                        'bg-gray-100',
+                                        'bg-white',
+                                        'p-3',
                                     )}
                                 >
                                     {product.image ? (
-                                        <motion.img
+                                        <img
                                             src={`/storage/${product.image}`}
-                                            alt={product.title ?? 'Product'}
+                                            alt={title}
                                             loading="lazy"
-                                            className="h-full w-full object-cover"
-                                            whileHover={{ scale: 1.1 }}
-                                            transition={{ duration: 0.3 }}
+                                            className="h-full w-full object-contain"
                                         />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
@@ -117,70 +138,59 @@ export default function Products({
                                     )}
                                 </div>
 
-                                {/* Content */}
                                 <div
                                     className={cn(
+                                        'flex',
+                                        'flex-1',
+                                        'flex-col',
+                                        'bg-white',
                                         'p-4',
                                         'text-center',
-                                        'flex',
-                                        'flex-col',
-                                        'flex-1',
                                     )}
                                 >
-                                    <motion.h3
+                                    <h3
                                         className={cn(
-                                            'max-w-[200px]',
                                             'mx-auto',
+                                            'line-clamp-2',
+                                            'max-w-[200px]',
                                             'text-lg',
                                             'font-semibold',
-                                            'mb-2',
-                                            'line-clamp-2',
+                                            'text-[#c3102e]',
                                         )}
-                                        whileHover={{ color: '#c3102e' }}
-                                        transition={{ duration: 0.2 }}
                                     >
-                                        {product.title}
-                                    </motion.h3>
-                                    <div className="mt-auto">
-                                        {product.downloadLink ? (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <Link
-                                                    href={route(
-                                                        'documents.product',
-                                                        product.id,
-                                                    )}
-                                                    className="rounded bg-[#c3102e] px-4 py-2 text-white transition-colors hover:bg-[#9c0d25] focus-visible:ring-2 focus-visible:ring-[#c3102e] focus-visible:ring-offset-2 focus-visible:outline-none"
-                                                >
-                                                    View
-                                                </Link>
-                                                <a
-                                                    href={product.downloadLink}
-                                                    download
-                                                    className="rounded bg-[#170000] px-4 py-2 text-white transition-colors hover:bg-[#5a0a0f] focus-visible:ring-2 focus-visible:ring-[#170000] focus-visible:ring-offset-2 focus-visible:outline-none"
-                                                >
-                                                    Download
-                                                </a>
-                                            </div>
-                                        ) : (
-                                            <span
-                                                className={cn(
-                                                    'inline-block',
-                                                    'bg-gray-400',
-                                                    'text-white',
-                                                    'px-4',
-                                                    'py-2',
-                                                    'rounded',
-                                                    'cursor-not-allowed',
-                                                )}
-                                            >
-                                                No File
-                                            </span>
-                                        )}
-                                    </div>
+                                        {title}
+                                    </h3>
                                 </div>
                             </motion.div>
-                        </SwiperSlide>
-                    ))}
+                        );
+
+                        return (
+                            <SwiperSlide
+                                key={product.id}
+                                style={{ height: 'auto' }}
+                            >
+                                {hasPdf ? (
+                                    <Link
+                                        href={route(
+                                            'documents.product',
+                                            product.id,
+                                        )}
+                                        className="block h-full cursor-pointer focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-[#c3102e] focus-visible:ring-offset-2 focus-visible:outline-none"
+                                        aria-label={`View ${title} PDF`}
+                                    >
+                                        {card}
+                                    </Link>
+                                ) : (
+                                    <div
+                                        className="h-full"
+                                        aria-label={`${title} (no PDF available)`}
+                                    >
+                                        {card}
+                                    </div>
+                                )}
+                            </SwiperSlide>
+                        );
+                    })}
                 </Swiper>
             </motion.div>
         </div>

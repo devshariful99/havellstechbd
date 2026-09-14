@@ -66,6 +66,17 @@ test('products without a pdf expose a null download link', function () {
         ->assertInertia(fn ($page) => $page->where('products.0.downloadLink', null));
 });
 
+test('products with a pdf expose a download link for the clickable card', function () {
+    $product = Product::factory()->create(['file' => 'products/files/spec.pdf']);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('products.0.id', $product->id)
+            ->where('products.0.downloadLink', '/storage/'.$product->file)
+            ->where('products.0.title', $product->title));
+});
+
 test('the home page does not query the same table twice', function () {
     Approved::factory()->count(2)->create();
 

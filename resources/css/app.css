@@ -508,6 +508,15 @@
   transform: scale(1.15) !important;
 }
 
+.products-swiper .swiper-pagination-bullet {
+  opacity: 1 !important;
+  background: #d1d5db !important;
+}
+
+.products-swiper .swiper-pagination-bullet-active {
+  background: #c3102e !important;
+}
+
 @media (min-width: 768px) {
   .hero-swiper .swiper-button-next,
   .hero-swiper .swiper-button-prev {
