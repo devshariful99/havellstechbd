@@ -4,10 +4,13 @@ namespace App\Services;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 
 class SiteSettings
 {
     public const CACHE_KEY = 'site.settings';
+
+    public const DEFAULT_LOGO_PATH = '/logo.jpeg';
 
     /**
      * Keys the admin site-settings form can read and write.
@@ -18,6 +21,7 @@ class SiteSettings
         'site_name',
         'site_tagline',
         'site_description',
+        'site_logo',
         'primary_phone',
         'primary_email',
         'contact_email',
@@ -89,12 +93,35 @@ class SiteSettings
     }
 
     /**
+     * Whether a custom logo file is stored and present on disk.
+     */
+    public function hasCustomLogo(): bool
+    {
+        $relativePath = $this->get('site_logo');
+
+        return filled($relativePath) && File::isFile(public_path($relativePath));
+    }
+
+    /**
+     * Public URL for the site logo (uploaded path or default asset).
+     */
+    public function logoUrl(): string
+    {
+        if (! $this->hasCustomLogo()) {
+            return self::DEFAULT_LOGO_PATH;
+        }
+
+        return '/'.ltrim((string) $this->get('site_logo'), '/');
+    }
+
+    /**
      * Values shared with the public Inertia shell (header, footer, Head title).
      *
      * @return array{
      *     site_name: string,
      *     site_tagline: string|null,
      *     site_description: string|null,
+     *     logo_url: string,
      *     phone: string|null,
      *     email: string|null,
      *     social: array<string, string>
@@ -106,6 +133,7 @@ class SiteSettings
             'site_name' => $this->get('site_name', config('app.name')) ?? config('app.name'),
             'site_tagline' => $this->get('site_tagline'),
             'site_description' => $this->get('site_description', $this->defaultDescription()),
+            'logo_url' => $this->logoUrl(),
             'phone' => $this->get('primary_phone', config('contact.primary_phone')),
             'email' => $this->get('primary_email', config('contact.primary_email')),
             'social' => array_filter([
@@ -129,6 +157,7 @@ class SiteSettings
             'site_name' => config('app.name'),
             'site_tagline' => 'Industrial electrical solutions for Bangladesh',
             'site_description' => $this->defaultDescription(),
+            'site_logo' => null,
             'primary_phone' => config('contact.primary_phone'),
             'primary_email' => config('contact.primary_email'),
             'contact_email' => config('mail.from.address'),

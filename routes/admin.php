@@ -29,7 +29,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::controller(SiteSettingController::class)->group(function () {
             Route::get('/settings', 'edit')->name('settings.edit');
-            Route::put('/settings', 'update')->name('settings.update');
+            // POST (not PUT) so multipart logo uploads work reliably.
+            Route::post('/settings', 'update')->name('settings.update');
         });
 
         Route::controller(ContactPageSettingController::class)->group(function () {

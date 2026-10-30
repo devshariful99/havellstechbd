@@ -4,15 +4,19 @@ use App\Mail\ContactMailable;
 use App\Models\Admin;
 use App\Models\Setting;
 use App\Services\SiteSettings;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 
 beforeEach(function () {
     $this->admin = Admin::factory()->create();
     app(SiteSettings::class)->flush();
+    config(['media.logo_directory' => 'testing/site-logos']);
 });
 
 afterEach(function () {
     app(SiteSettings::class)->flush();
+    File::deleteDirectory(public_path('testing/site-logos'));
 });
 
 test('guests cannot open site settings', function () {
@@ -28,12 +32,15 @@ test('admins can view site settings', function () {
             ->component('backend/Settings/Edit')
             ->has('settings.site_name')
             ->has('settings.primary_phone')
-            ->has('settings.contact_email'));
+            ->has('settings.contact_email')
+            ->has('logoUrl')
+            ->where('hasCustomLogo', false)
+            ->where('logoUrl', SiteSettings::DEFAULT_LOGO_PATH));
 });
 
 test('admins can update site settings', function () {
     $this->actingAs($this->admin, 'admin')
-        ->put(route('admin.settings.update'), [
+        ->post(route('admin.settings.update'), [
             'site_name' => 'Techno Power BD',
             'site_tagline' => 'Industrial excellence',
             'site_description' => 'Techno Power BD supplies industrial electrical systems across Bangladesh.',
@@ -62,10 +69,97 @@ test('admins can update site settings', function () {
         ]);
 });
 
+test('admins can upload a custom site logo', function () {
+    $logo = UploadedFile::fake()->image('brand-logo.png', 400, 200);
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.settings.update'), [
+            'site_name' => 'HavellsTech Power Engineering',
+            'site_tagline' => 'Always with quality',
+            'logo' => $logo,
+        ])
+        ->assertRedirect(route('admin.settings.edit'))
+        ->assertSessionHas('success');
+
+    $storedPath = Setting::query()->where('key', 'site_logo')->value('value');
+
+    expect($storedPath)->not->toBeNull()
+        ->and(File::isFile(public_path($storedPath)))->toBeTrue();
+
+    $logoUrl = app(SiteSettings::class)->logoUrl();
+
+    expect($logoUrl)->toStartWith('/testing/site-logos/')
+        ->and(app(SiteSettings::class)->publicPayload()['logo_url'])->toBe($logoUrl);
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.settings.edit'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('hasCustomLogo', true)
+            ->where('logoUrl', $logoUrl));
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('contactDetails.logo_url', $logoUrl))
+        ->assertSee('href="'.$logoUrl.'"', false);
+});
+
+test('admins can remove a custom site logo and fall back to the default', function () {
+    $logo = UploadedFile::fake()->image('remove-me.jpg', 200, 100);
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.settings.update'), [
+            'site_name' => 'HavellsTech Power Engineering',
+            'logo' => $logo,
+        ])
+        ->assertRedirect(route('admin.settings.edit'));
+
+    $storedPath = Setting::query()->where('key', 'site_logo')->value('value');
+    expect(File::isFile(public_path($storedPath)))->toBeTrue();
+
+    $this->actingAs($this->admin, 'admin')
+        ->post(route('admin.settings.update'), [
+            'site_name' => 'HavellsTech Power Engineering',
+            'remove_logo' => '1',
+        ])
+        ->assertRedirect(route('admin.settings.edit'));
+
+    expect(Setting::query()->where('key', 'site_logo')->value('value'))->toBeNull()
+        ->and(File::isFile(public_path($storedPath)))->toBeFalse()
+        ->and(app(SiteSettings::class)->logoUrl())->toBe(SiteSettings::DEFAULT_LOGO_PATH);
+});
+
+test('site settings reject non image logo uploads', function () {
+    $this->actingAs($this->admin, 'admin')
+        ->from(route('admin.settings.edit'))
+        ->post(route('admin.settings.update'), [
+            'site_name' => 'HavellsTech Power Engineering',
+            'logo' => UploadedFile::fake()->create('notes.txt', 10, 'text/plain'),
+        ])
+        ->assertRedirect(route('admin.settings.edit'))
+        ->assertSessionHasErrors(['logo']);
+});
+
+test('missing logo files fall back to the default brand asset', function () {
+    app(SiteSettings::class)->update([
+        'site_logo' => 'testing/site-logos/missing-logo.png',
+    ]);
+
+    expect(app(SiteSettings::class)->hasCustomLogo())->toBeFalse()
+        ->and(app(SiteSettings::class)->logoUrl())->toBe(SiteSettings::DEFAULT_LOGO_PATH);
+
+    $this->actingAs($this->admin, 'admin')
+        ->get(route('admin.settings.edit'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('hasCustomLogo', false)
+            ->where('logoUrl', SiteSettings::DEFAULT_LOGO_PATH));
+});
+
 test('site settings validation rejects invalid emails and urls', function () {
     $this->actingAs($this->admin, 'admin')
         ->from(route('admin.settings.edit'))
-        ->put(route('admin.settings.update'), [
+        ->post(route('admin.settings.update'), [
             'site_name' => '',
             'site_tagline' => null,
             'primary_phone' => null,
@@ -101,6 +195,7 @@ test('updated contact details are shared with inertia', function () {
             ->where('contactDetails.phone', '0999888777')
             ->where('contactDetails.email', 'public@techno.test')
             ->where('contactDetails.site_description', 'Shared SEO description for search engines.')
+            ->where('contactDetails.logo_url', SiteSettings::DEFAULT_LOGO_PATH)
             ->where('contactDetails.social.facebook', 'https://facebook.com/shared'));
 });
 

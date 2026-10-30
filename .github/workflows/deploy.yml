@@ -20,7 +20,11 @@
 #    Ensure storage/ and bootstrap/cache are writable, Composer is on PATH, and the
 #    Hostinger document root points at DEPLOY_PATH/public (Laravel public/).
 #
-# 3) Push to main or run this workflow manually (Actions → Deploy → Run workflow).
+# 3) In hPanel → Advanced → PHP Configuration, select PHP 8.3 (or the minor this
+#    app requires). Hostinger applies the latest patch for that minor automatically;
+#    Composer cannot upgrade system PHP — it only installs packages for the live runtime.
+#
+# 4) Push to main or run this workflow manually (Actions → Deploy → Run workflow).
 #
 # Never commit .env or Hostinger passwords into the repository.
 
@@ -97,14 +101,26 @@ jobs:
             --exclude='eslint.config.js' \
             --exclude='AGENTS.md' \
             --exclude='CLAUDE.md' \
+            --exclude='public/images/site-logo/' \
+            --exclude='public/images/heroes/' \
+            --exclude='public/images/our-partners/' \
+            --exclude='public/images/contact/' \
+            --exclude='public/testing/' \
             ./ deploy-bundle/
 
           # Keep Laravel storage directory structure (empty dirs + .gitignore placeholders).
+          # Also keep public upload dirs so production media is never wiped by an empty sync.
           mkdir -p \
             deploy-bundle/storage/app/public \
             deploy-bundle/storage/framework/{cache/data,sessions,testing,views} \
             deploy-bundle/storage/logs \
-            deploy-bundle/bootstrap/cache
+            deploy-bundle/bootstrap/cache \
+            deploy-bundle/public/images/site-logo \
+            deploy-bundle/public/images/heroes \
+            deploy-bundle/public/images/our-partners \
+            deploy-bundle/public/images/contact
+
+          printf '*\n!.gitignore\n' > deploy-bundle/public/images/site-logo/.gitignore
 
           # Hostinger disables proc_open, so package:discover cannot run on the server.
           # Ship the discovery cache generated during the CI composer install instead.
@@ -159,11 +175,31 @@ jobs:
               exit 1
             fi
 
+            PHP_RUNTIME="$(php -r 'echo PHP_VERSION;')"
+            PHP_MINOR="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+            echo "Live PHP runtime: ${PHP_RUNTIME} (minor ${PHP_MINOR}.x — Hostinger applies the latest patch for this minor in hPanel)."
+
+            # Require PHP >= 8.3.36 to match composer.json; Hostinger applies newer 8.3.x patches in hPanel.
+            php -r 'exit(version_compare(PHP_VERSION, "8.3.36", ">=") ? 0 : 1);' \
+              || { echo "PHP ${PHP_RUNTIME} is below 8.3.36. Set PHP 8.3 (latest patch) in hPanel → Advanced → PHP Configuration."; exit 1; }
+
+            # Never pin an older platform.php — Composer must target the live interpreter patch.
+            $COMPOSER_BIN config --unset platform.php 2>/dev/null || true
+
             # --no-scripts: Hostinger disables proc_open; artisan package:discover would fail.
-            # packages.php is uploaded from CI instead.
+            # packages.php is uploaded from CI instead. Install from the reviewed lockfile.
             $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
             php artisan migrate --force
+
+            # Ensure upload directories exist for admin media (logos, heroes, partners).
+            mkdir -p \
+              public/images/site-logo \
+              public/images/heroes \
+              public/images/our-partners \
+              public/images/contact \
+              storage/app/public \
+              public/storage
 
             # Hostinger often cannot create symlinks. Prefer a real link; otherwise
             # mirror public-disk files into public/storage so static serving still works.

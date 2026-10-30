@@ -58,6 +58,7 @@ export interface ContactDetails {
     site_name?: string;
     site_tagline?: string | null;
     site_description?: string | null;
+    logo_url?: string;
     phone: string | null;
     email: string | null;
     social: Partial<Record<'facebook' | 'twitter' | 'linkedin', string>>;

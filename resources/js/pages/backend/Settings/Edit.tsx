@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 
+import FileUpload from '@/components/file-upload';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +19,8 @@ export interface SiteSettingsForm {
     site_name: string;
     site_tagline: string;
     site_description: string;
+    logo: File | null;
+    remove_logo: string;
     primary_phone: string;
     primary_email: string;
     contact_email: string;
@@ -27,25 +30,55 @@ export interface SiteSettingsForm {
 }
 
 interface Props {
-    settings: SiteSettingsForm;
+    settings: Omit<SiteSettingsForm, 'logo' | 'remove_logo'> & {
+        site_logo?: string;
+    };
+    logoUrl: string;
+    hasCustomLogo: boolean;
 }
 
-export default function Edit({ settings }: Props) {
-    const { data, setData, put, processing, errors } = useForm<SiteSettingsForm>({
-        site_name: settings.site_name ?? '',
-        site_tagline: settings.site_tagline ?? '',
-        site_description: settings.site_description ?? '',
-        primary_phone: settings.primary_phone ?? '',
-        primary_email: settings.primary_email ?? '',
-        contact_email: settings.contact_email ?? '',
-        facebook_url: settings.facebook_url ?? '',
-        twitter_url: settings.twitter_url ?? '',
-        linkedin_url: settings.linkedin_url ?? '',
-    });
+export default function Edit({ settings, logoUrl, hasCustomLogo }: Props) {
+    const { data, setData, post, processing, errors } =
+        useForm<SiteSettingsForm>({
+            site_name: settings.site_name ?? '',
+            site_tagline: settings.site_tagline ?? '',
+            site_description: settings.site_description ?? '',
+            logo: null,
+            remove_logo: '',
+            primary_phone: settings.primary_phone ?? '',
+            primary_email: settings.primary_email ?? '',
+            contact_email: settings.contact_email ?? '',
+            facebook_url: settings.facebook_url ?? '',
+            twitter_url: settings.twitter_url ?? '',
+            linkedin_url: settings.linkedin_url ?? '',
+        });
 
-    function handleSubmit(event: FormEvent) {
+    const [existingFiles, setExistingFiles] = useState(
+        hasCustomLogo
+            ? [
+                  {
+                      id: 'site-logo',
+                      path: settings.site_logo ?? logoUrl,
+                      url: logoUrl,
+                      mime_type: 'image/jpeg',
+                      name: 'Current logo',
+                  },
+              ]
+            : [],
+    );
+
+    function handleRemoveExisting(): void {
+        setExistingFiles([]);
+        setData('remove_logo', '1');
+        setData('logo', null);
+    }
+
+    function handleSubmit(event: FormEvent): void {
         event.preventDefault();
-        put(route('admin.settings.update'), { preserveScroll: true });
+        post(route('admin.settings.update'), {
+            forceFormData: true,
+            preserveScroll: true,
+        });
     }
 
     return (
@@ -57,8 +90,8 @@ export default function Edit({ settings }: Props) {
                     Site Settings
                 </h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Update the public site identity, contact details, and social
-                    links shown across the website.
+                    Update the public site identity, logo, contact details, and
+                    social links shown across the website.
                 </p>
             </div>
 
@@ -67,7 +100,8 @@ export default function Edit({ settings }: Props) {
                     <CardHeader>
                         <CardTitle>General</CardTitle>
                         <CardDescription>
-                            Branding shown in the browser title and public pages.
+                            Branding shown in the browser title and public
+                            pages.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2">
@@ -121,6 +155,39 @@ export default function Edit({ settings }: Props) {
                             </p>
                             <InputError message={errors.site_description} />
                         </div>
+
+                        <div className="grid gap-2 md:col-span-2">
+                            <Label htmlFor="logo">Website logo</Label>
+                            <p className="text-muted-foreground text-xs">
+                                Used in the header, auth screens, favicon, and
+                                across the site. Leave empty to keep the current
+                                logo. Removing a custom upload restores the
+                                default brand logo.
+                            </p>
+                            {!hasCustomLogo && existingFiles.length === 0 ? (
+                                <div className="bg-muted/40 flex items-center justify-center rounded-md border border-dashed p-4">
+                                    <img
+                                        src={logoUrl}
+                                        alt="Default site logo"
+                                        className="h-16 w-auto max-w-[220px] object-contain"
+                                    />
+                                </div>
+                            ) : null}
+                            <FileUpload
+                                value={data.logo}
+                                existingFiles={existingFiles}
+                                onRemoveExisting={handleRemoveExisting}
+                                onChange={(file) => {
+                                    setData('logo', file as File | null);
+                                    if (file) {
+                                        setData('remove_logo', '');
+                                    }
+                                }}
+                                accept="image/*"
+                                error={errors.logo}
+                            />
+                            <InputError message={errors.logo} />
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -139,7 +206,10 @@ export default function Edit({ settings }: Props) {
                                 id="primary_phone"
                                 value={data.primary_phone}
                                 onChange={(event) =>
-                                    setData('primary_phone', event.target.value)
+                                    setData(
+                                        'primary_phone',
+                                        event.target.value,
+                                    )
                                 }
                             />
                             <InputError message={errors.primary_phone} />
@@ -152,7 +222,10 @@ export default function Edit({ settings }: Props) {
                                 type="email"
                                 value={data.primary_email}
                                 onChange={(event) =>
-                                    setData('primary_email', event.target.value)
+                                    setData(
+                                        'primary_email',
+                                        event.target.value,
+                                    )
                                 }
                             />
                             <InputError message={errors.primary_email} />
@@ -167,7 +240,10 @@ export default function Edit({ settings }: Props) {
                                 type="email"
                                 value={data.contact_email}
                                 onChange={(event) =>
-                                    setData('contact_email', event.target.value)
+                                    setData(
+                                        'contact_email',
+                                        event.target.value,
+                                    )
                                 }
                                 placeholder="Where contact form messages are sent"
                             />
@@ -180,7 +256,8 @@ export default function Edit({ settings }: Props) {
                     <CardHeader>
                         <CardTitle>Social links</CardTitle>
                         <CardDescription>
-                            Leave blank to hide a network from the public header.
+                            Leave blank to hide a network from the public
+                            header.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2">
@@ -191,7 +268,10 @@ export default function Edit({ settings }: Props) {
                                 type="url"
                                 value={data.facebook_url}
                                 onChange={(event) =>
-                                    setData('facebook_url', event.target.value)
+                                    setData(
+                                        'facebook_url',
+                                        event.target.value,
+                                    )
                                 }
                                 placeholder="https://facebook.com/..."
                             />
@@ -199,7 +279,9 @@ export default function Edit({ settings }: Props) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="twitter_url">Twitter / X URL</Label>
+                            <Label htmlFor="twitter_url">
+                                Twitter / X URL
+                            </Label>
                             <Input
                                 id="twitter_url"
                                 type="url"
@@ -219,7 +301,10 @@ export default function Edit({ settings }: Props) {
                                 type="url"
                                 value={data.linkedin_url}
                                 onChange={(event) =>
-                                    setData('linkedin_url', event.target.value)
+                                    setData(
+                                        'linkedin_url',
+                                        event.target.value,
+                                    )
                                 }
                                 placeholder="https://linkedin.com/..."
                             />

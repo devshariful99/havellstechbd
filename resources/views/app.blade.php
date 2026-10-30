@@ -35,8 +35,8 @@
     <title inertia>{{ $seo['site_name'] }}</title>
     <meta name="description" content="{{ $seo['site_description'] }}">
 
-    <link rel="icon" href="/logo.jpeg" type="image/jpeg">
-    <link rel="apple-touch-icon" href="/logo.jpeg">
+    <link rel="icon" href="{{ $seo['logo_url'] }}">
+    <link rel="apple-touch-icon" href="{{ $seo['logo_url'] }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />

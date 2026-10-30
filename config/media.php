@@ -23,4 +23,6 @@ return [
 
     'contact_directory' => env('MEDIA_CONTACT_DIRECTORY', 'images/contact'),
 
+    'logo_directory' => env('MEDIA_LOGO_DIRECTORY', 'images/site-logo'),
+
 ];
